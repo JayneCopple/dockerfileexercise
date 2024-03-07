@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+DOCKER_USER=agray998
+
+docker stop $(docker ps -q)
+docker rm $(docker ps -aq)
+
+docker build -t $DOCKER_USER/task2-db db
+docker build -t $DOCKER_USER/task2-app flask-app
+docker build -t $DOCKER_USER/task2-nginx nginxjaynecopple

@@ -1,0 +1,40 @@
+# Use Python 3.7 as a base image
+FROM python:3.7
+# Copy contents into image
+COPY . .
+# install pip dependencies from requirements file
+RUN pip install -r requirements.txt
+# Expose correct port
+EXPOSE 5000
+# Create an entrypoint
+ENTRYPOINT ["python", "app.py"]
+  GNU nano 4.8                                      Dockerfile                                       Modified  
+# Use Python 3.7 as a base image
+FROM python:3.7
+# Copy contents into image
+COPY . .
+# install pip dependencies from requirements file
+RUN pip install -r requirements.txt
+# Expose correct port
+EXPOSE 5000
+# Create an entrypoint
+ENTRYPOINT ["python", "app.py"]
+# Use Python 3.7 as a base image
+
+# Copy contents into image
+
+# install pip dependencies from requirements file
+
+# Expose correct port
+
+# Create an entrypoint# Use Python 3.7 as a base image
+
+# Copy contents into image
+ 
+# install pip dependencies from requirements file
+ 
+# Expose correct port
+
+# Create an entrypoint
+
+
