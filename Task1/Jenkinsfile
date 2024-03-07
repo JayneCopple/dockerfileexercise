@@ -7,8 +7,8 @@ pipeline {
     stage('Build') {
             steps {
                 sh '''
-                    docker build -t $DOCKER_USER/task1_image:v1 .
-                    docker build -t $DOCKER_USER/task1_nginx:v1 -f Dockerfile.nginx .
+                    docker build -t $DOCKER_USER/task1_image:v1 Task1/flask-app
+                    docker build -t $DOCKER_USER/task1_nginx:v1 -f Task1/Dockerfile.nginx 
                     docker run -d -p 80:5500 $DOCKER_USER/task1_image:v1
                 '''   
             }
