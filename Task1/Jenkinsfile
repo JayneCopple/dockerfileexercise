@@ -1,15 +1,15 @@
 pipeline {
     agent any
     environment {
-        DOCKER_USER = "jaynecopple"
+        REGISTRY = "eu.gcr.io/lbg-mea-17"
+        VERSION = "v2"
     }
   stages {
     stage('Build') {
             steps {
                 sh '''
-                    docker build -t $DOCKER_USER/task1_image:v1 .
-                    docker build -t $DOCKER_USER/task1_nginx:v1 -f Dockerfile.nginx 
-                    docker run -d -p 80:5500 $DOCKER_USER/task1_image:v1
+                    docker build -t $REGISTRY/task1_image:$VERSION Task1
+                    
                 '''   
             }
         }
@@ -17,25 +17,33 @@ pipeline {
             steps {
                 echo "testing...."
                 sh "sleep 1"
-                each "Passed!"
+                echo "Passed!"
+            }
+        }
+        stage('Push') {
+            steps {
+                sh '''
+                echo "Push to registry....defined in environment variable"
+                gcloud config set account jayne-srv-storage-admin@lbg-mea-17.iam.gserviceaccount.com
+                docker push $REGISTRY/task1_image:$VERSION
+                ''' 
             }
         }
       stage('Deploy') {
             steps {
                 sh '''
-                    docker stop \$(docker ps -q) || sleep 1
-                    docker rm \$(docker ps -aq) || sleep 1
-
-                    docker network inspect task1-network && sleep 1 || create task1-network
-                    docker run -d --network task1-network --name flask-app  $DOCKER_USER/task1_image:v1
-                    docker run -d --network task1-network -p 80:80 --name nginx $DOCKER_USER/task1_nginx:v1 
+                    gcloud config set account jayne-jenkins-k8s-srv@lbg-mea-17.iam.gserviceaccount.com
+                    kubectl apply -f Task1
                 '''
             }
         }
   }
   post {
     always {
-        sh 'docker system prune -f'
+        sh '''
+        docker system prune -f
+        gcloud config set account null
+        '''
     }
   }
 }

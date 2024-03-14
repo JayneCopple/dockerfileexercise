@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_USER = "jaynecopple"
+    }
+  stages {
+    stage('Build') {
+            steps {
+                sh '''
+                    docker build -t $DOCKER_USER/task1_image:v1 .
+                    docker build -t $DOCKER_USER/task1_nginx:v1 -f Dockerfile.nginx 
+                    docker run -d -p 80:5500 $DOCKER_USER/task1_image:v1
+                '''   
+            }
+        }
+      stage('Test') {
+            steps {
+                echo "testing...."
+                sh "sleep 1"
+                each "Passed!"
+            }
+        }
+      stage('Deploy') {
+            steps {
+                sh '''
+                    docker stop \$(docker ps -q) || sleep 1
+                    docker rm \$(docker ps -aq) || sleep 1
+
+                    docker network inspect task1-network && sleep 1 || create task1-network
+                    docker run -d --network task1-network --name flask-app  $DOCKER_USER/task1_image:v1
+                    docker run -d --network task1-network -p 80:80 --name nginx $DOCKER_USER/task1_nginx:v1 
+                '''
+            }
+        }
+  }
+  post {
+    always {
+        sh 'docker system prune -f'
+    }
+  }
+}
