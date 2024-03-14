@@ -33,7 +33,7 @@ pipeline {
             steps {
                 sh '''
                     gcloud config set account jayne-jenkins-k8s-srv@lbg-mea-17.iam.gserviceaccount.com
-                    kubectl apply -f Task1
+                    kubectl apply -f .
                 '''
             }
         }
